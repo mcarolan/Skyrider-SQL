@@ -22,29 +22,31 @@ open Sql
 %%   
  
 start:
-    | statement { {Statements = [$1]} }
-	| statement END statement { { Statements = $3 :: [$1] } }
+    | EOF                      { { Statements = [] } }
+    | statement                { { Statements = [$1] } }
+	| statement END statement  { { Statements = $3 :: [$1] } }
 
 statement:  SELECT columnList   
-        FROM ID   
-        joinList   
-        whereClause   
-        orderByClause                  {   
+            FROM ID   
+            joinList   
+            whereClause   
+            orderByClause  {   
                                 { Table = $4;   
                                   Columns = List.rev $2;   
                                   Joins = $5;   
                                   Where = $6;   
                                   OrderBy = $7 }   
                             }   
+
 columnList:   
-    | ID                    { [$1]}   
+    | ID                   { [$1] }   
     | columnList COMMA ID  { $3 :: $1 }   
  
 // join clause   
 joinList:   
-    |                               { [] }   
-    | joinClause                    { [$1] }   
-    | joinClause joinList           { $1 :: $2 }       
+    |                      { [] }   
+    | joinClause           { [$1] }   
+    | joinClause joinList  { $1 :: $2 }       
  
 joinClause:   
     | INNER JOIN ID joinOnClause    { $3, Inner, $4 }   

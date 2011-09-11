@@ -47,7 +47,7 @@ rule tokenize = parse
 | int           { INT(Int32.Parse(LexBuffer<_>.LexemeString lexbuf)) }   
 | float         { FLOAT(Double.Parse(LexBuffer<_>.LexemeString lexbuf)) }   
 | operator      { ops.[LexBuffer<_>.LexemeString lexbuf] }   
-| identifier    { match keywords.TryFind(LexBuffer<_>.LexemeString lexbuf) with   
+| identifier    { match keywords.TryFind((LexBuffer<_>.LexemeString lexbuf).ToUpper()) with
                   | Some(token) -> token   
                   | None -> ID(LexBuffer<_>.LexemeString lexbuf) }   
 | ','           { COMMA }  
