@@ -11,6 +11,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using Microsoft.FSharp.Text.Lexing;
 
 namespace Skyrider
 {
@@ -22,6 +23,35 @@ namespace Skyrider
         public MainWindow()
         {
             InitializeComponent();
+
+            string query =
+                @"SELECT x, y, z   
+                  FROM t1   
+                  LEFT JOIN t2   
+                  INNER JOIN t3 ON t3.ID = t2.ID   
+                  WHERE x = 50 AND y = 20   
+                  ORDER BY x ASC, y DESC, z;
+
+                  SELECT x FROM y";
+
+            Parse(query);
+        }
+
+        private void parse_Click(object sender, RoutedEventArgs e)
+        {
+            Parse(textBox.Text);
+        }
+
+        public void Parse(string query)
+        {
+            var ast = SqlHandler.ParseSql(query);
+
+            foreach (var statement in ast.Statements)
+            {
+                Console.WriteLine(statement.Columns);
+                Console.WriteLine(statement.Joins);
+                Console.WriteLine(statement.OrderBy);
+            }
         }
     }
 }
